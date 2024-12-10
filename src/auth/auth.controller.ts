@@ -1,20 +1,16 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
+import { AuthService } from './auth.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
 
-    constructor(private userService: UserService){}
+   
 
+    @UseGuards(AuthGuard('local'))
     @Post('/login')
-    async login(@Body() loginDto:any){
-        const user = await this.userService.findByemail(loginDto.email);
-
-        if(user.password === loginDto.password){
-            return user;
-        }
-
-        return 'password doesnt match';
+    async login( @Request() req:any){
+       return req.user;
     }
-
 }
